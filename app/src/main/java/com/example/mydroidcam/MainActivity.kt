@@ -1,24 +1,33 @@
 package com.example.mydroidcam
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.wifi.WifiInfo
+import android.net.wifi.WifiManager
+import android.net.wifi.WifiSsid
+import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Website.URL
+import android.text.format.Formatter
+import android.util.Log
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 class MainActivity : AppCompatActivity() {
     //things related to top bar
@@ -31,6 +40,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var preview: Preview
 
+    //ip addres things
+    private lateinit var wifiIpText: TextView
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,6 +58,13 @@ class MainActivity : AppCompatActivity() {
         cameraPreview = findViewById(R.id.camera_preview)
         defaultCameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         topAppBar = findViewById(R.id.top_app_bar)
+        wifiIpText = findViewById(R.id.wifi_ip)
+
+        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiManager.connectionInfo
+        val ipAddress = Formatter.formatIpAddress(wifiInfo.ipAddress)
+
+        wifiIpText.text = ipAddress
 
         if (allPermissionsGranted()) {
             startCamera()
@@ -66,8 +86,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
-    private fun captureVideo() {}
 
     private fun changeCamera() {
         if(defaultCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA){

@@ -7,4 +7,10 @@
         android:title="flip camera"
         app:showAsAction="always"
         />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/baseline_settings"
+        android:title="flip camera"
+        app:showAsAction="always"
+        />
 </menu>

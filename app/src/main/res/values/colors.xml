@@ -3,7 +3,7 @@
     <color name="black">#ff000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="android_green">#3DDC84</color>
-    <color name="background_dark">#2E3719</color>
+    <color name="background_dark">#001a00</color>
     <color name="background_light">#D9EDDF</color>
     <color name="second">#386C5F</color>
 </resources>
