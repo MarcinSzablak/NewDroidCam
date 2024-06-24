@@ -1,15 +1,9 @@
 package com.example.mydroidcam
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.net.wifi.WifiInfo
-import android.net.wifi.WifiManager
-import android.net.wifi.WifiSsid
 import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Website.URL
-import android.text.format.Formatter
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
@@ -24,6 +18,8 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.mydroidcam.server.IStatusUpdateReceiver
+import com.example.mydroidcam.server.WebServer
 import com.google.android.material.appbar.MaterialToolbar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -43,6 +39,10 @@ class MainActivity : AppCompatActivity() {
     //ip addres things
     private lateinit var wifiIpText: TextView
 
+    //server things
+    private lateinit var webServer: WebServer
+    private var port: Int = 8888;
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +60,21 @@ class MainActivity : AppCompatActivity() {
         topAppBar = findViewById(R.id.top_app_bar)
         wifiIpText = findViewById(R.id.wifi_ip)
 
-        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val wifiInfo = wifiManager.connectionInfo
-        val ipAddress = Formatter.formatIpAddress(wifiInfo.ipAddress)
 
-        wifiIpText.text = ipAddress
+        //Start Server
+        webServer = WebServer(port, this)
 
+        webServer.statusReceiver = object:IStatusUpdateReceiver{
+            override fun updateStatus(ipAddress: String, clientCount: Int) {
+                runOnUiThread{
+                    wifiIpText.text = ipAddress.plus(":${port}")
+                }
+            }
+        }
+
+        webServer.start()
+
+        //Check Permissions
         if (allPermissionsGranted()) {
             startCamera()
         } else {
