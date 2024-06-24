@@ -1,6 +1,8 @@
 package com.example.mydroidcam
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -43,6 +45,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webServer: WebServer
     private var port: Int = 8888;
 
+    //clip data
+    private lateinit var clipData: ClipData;
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         topAppBar = findViewById(R.id.top_app_bar)
         wifiIpText = findViewById(R.id.wifi_ip)
 
+        //set up clipBoard
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
 
         //Start Server
         webServer = WebServer(port, this)
@@ -69,10 +77,18 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread{
                     wifiIpText.text = ipAddress.plus(":${port}")
                 }
-            }
-        }
+        }}
 
         webServer.start()
+
+        wifiIpText.setOnClickListener {
+            clipData = ClipData.newHtmlText(
+                "link",
+                wifiIpText.text.toString().plus(":${port}"),
+                wifiIpText.text.toString().plus(":${port}")
+            )
+            Toast.makeText( this, "copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
 
         //Check Permissions
         if (allPermissionsGranted()) {

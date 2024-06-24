@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyDroidCam</string>
+    <string name="click_ip">Click Ip below to copy to clipboard</string>
 </resources>
