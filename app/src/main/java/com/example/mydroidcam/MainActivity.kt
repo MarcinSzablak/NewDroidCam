@@ -65,8 +65,8 @@ class MainActivity : AppCompatActivity() {
         topAppBar = findViewById(R.id.top_app_bar)
         wifiIpText = findViewById(R.id.wifi_ip)
 
-        //set up clipBoard
-        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        //set up clipboardManager
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
 
         //Start Server
@@ -81,12 +81,11 @@ class MainActivity : AppCompatActivity() {
 
         webServer.start()
 
+        val input = wifiIpText.text.toString()
+
         wifiIpText.setOnClickListener {
-            clipData = ClipData.newHtmlText(
-                "link",
-                wifiIpText.text.toString().plus(":${port}"),
-                wifiIpText.text.toString().plus(":${port}")
-            )
+            clipData = ClipData.newPlainText("data", input, )
+            clipboardManager.setPrimaryClip(clipData)
             Toast.makeText( this, "copied to clipboard", Toast.LENGTH_SHORT).show()
         }
 

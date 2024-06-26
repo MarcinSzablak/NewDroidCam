@@ -19,8 +19,6 @@ class WebServer {
 
     var statusReceiver:IStatusUpdateReceiver
 
-
-
     constructor(port:Int, context: Context) {
         this.port = port;
         this.context = context;
